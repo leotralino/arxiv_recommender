@@ -26,8 +26,7 @@ def main():
     print(output_json)
 
     try:
-        # send notification email
-        email_columns = ["title", "reasoning", "url"]  # Assuming you have a link column
+        email_columns = ["title", "reasoning", "url"]
         html_table = refined_df[email_columns].to_html(index=False, render_links=True)
 
         full_body = f"""
@@ -41,6 +40,7 @@ def main():
         """
 
         send_email(subject="📚 Your Daily ArXiv Digest", body_html=full_body)
+        logger.info("Email notification sent successfully!")
     except Exception as e:
         logger.error("Failed to send email notification", exc_info=e)
 
