@@ -41,6 +41,7 @@ def fetch_recent_papers(categories: list[str] = ["cs.AI"], days: int = 1, max_re
                 "published": result.published,
                 "primary_category": result.primary_category,
                 "url": result.pdf_url,
+                "combined_text": f"Title: {result.title} Abstract: {result.summary.replace('\n', ' ')}",
             }
         )
 
