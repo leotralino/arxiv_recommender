@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def fetch_recent_papers(
-    categories=["cs.LG", "cs.AI", "cs.CV"], days=1, max_results=100
+    categories: list[str] = ["cs.AI"], days: int = 1, max_results=100
 ):
     """
     Fetches papers from specific categories within a time window.
@@ -43,13 +43,14 @@ def fetch_recent_papers(
             {
                 "id": result.entry_id.split("/")[-1],
                 "title": result.title,
-                "summary": result.summary.replace("\n", " "),
-                "url": result.pdf_url,
-                "published": result.published,
                 "authors": [a.name for a in result.authors],
+                "abstract": result.summary.replace("\n", " "),
+                "published": result.published,
                 "primary_category": result.primary_category,
+                "url": result.pdf_url,
             }
         )
+
     since_time = threshold.strftime("%Y-%m-%d %H:%M")
     print(f"Fetched {len(results)} new papers since {since_time}")
     return pd.DataFrame(results)
