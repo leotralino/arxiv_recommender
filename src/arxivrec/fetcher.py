@@ -4,14 +4,11 @@ import logging
 import arxiv
 import pandas as pd
 
-# do logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def fetch_recent_papers(
-    categories: list[str] = ["cs.AI"], days: int = 1, max_results=100
-):
+def fetch_recent_papers(categories: list[str] = ["cs.AI"], days: int = 1, max_results=100):
     """
     Fetches papers from specific categories within a time window.
     """
@@ -24,14 +21,10 @@ def fetch_recent_papers(
         num_retries=3,
     )
 
-    search = arxiv.Search(
-        query=query, max_results=max_results, sort_by=arxiv.SortCriterion.SubmittedDate
-    )
+    search = arxiv.Search(query=query, max_results=max_results, sort_by=arxiv.SortCriterion.SubmittedDate)
 
     # 2. Time Window
-    threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        days=days
-    )
+    threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=days)
 
     results = []
     for result in client.results(search):

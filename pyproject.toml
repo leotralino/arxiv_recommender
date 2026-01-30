@@ -1,5 +1,5 @@
 [project]
-name = "arxiv-recommender"
+name = "arxivrec"
 version = "0.1.0"
 description = "Daily ArXiv paper recommender using embeddings and LLM"
 readme = "README.md"
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-arxiv-rec = "arxiv_recommender.main:main"
+arxiv-rec = "arxivrec.main:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -27,7 +27,8 @@ dev = [
 
 [tool.ruff]
 # Enable linting and formatting for notebooks
-extend-include = ["*.ipynb"]
+extend-include = ["src/arxivrec/**/*.ipynb"]
+line-length = 120
 
 [tool.ruff.lint]
 # Specific rules: E (Error), F (Pyflakes), I (Isort/Imports)
