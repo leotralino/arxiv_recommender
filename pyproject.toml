@@ -29,7 +29,7 @@ dev = [
 [tool.ruff]
 # Enable linting and formatting for notebooks
 extend-include = ["src/arxivrec/**/*.ipynb"]
-line-length = 120
+line-length = 88
 
 [tool.ruff.lint]
 # Specific rules: E (Error), F (Pyflakes), I (Isort/Imports)

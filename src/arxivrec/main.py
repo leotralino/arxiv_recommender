@@ -1,33 +1,35 @@
 import logging
 
 from arxivrec.encoder import TextEncoder
-from arxivrec.fetcher import fetch_recent_papers
-from arxivrec.llm import fine_rank_with_llm
+from arxivrec.llm import OLLMRanker
 from arxivrec.notification import send_email
+from arxivrec.pipeline import OLLMPipeline
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 def main():
-    df = fetch_recent_papers(max_results=100)
-
     encoder = TextEncoder()
+    ranker = OLLMRanker(model_name="llama3.2:3b")
+    pipeline = OLLMPipeline(
+        user_interest="I am interested in Retrieval-augmented generation (RAG).",
+        max_paper_to_fetch=100,
+        simsearch_top_k=10,
+        encoder=encoder,
+        ollm_ranker=ranker,
+    )
 
-    my_interest_embedding = encoder.encode(["I am interested in Retrieval-augmented generation (RAG)."])
-    content_embedding = encoder.encode(df["combined_text"].tolist())
-    top_k_indices = encoder.get_top_k_similar(my_interest_embedding, content_embedding, k=10)
+    df_recommendation = pipeline.recommend()
 
-    top_df = df.iloc[top_k_indices]
-
-    refined_df = fine_rank_with_llm(top_df)
-
-    output_json = refined_df.to_json(orient="records")
-    print(output_json)
+    output_json = df_recommendation.to_json(orient="records")
+    logger.info(f"Recommended articles: {output_json}")
 
     try:
         email_columns = ["title", "reasoning", "url"]
-        html_table = refined_df[email_columns].to_html(index=False, render_links=True)
+        html_table = df_recommendation[email_columns].to_html(
+            index=False, render_links=True
+        )
 
         full_body = f"""
         <html>
