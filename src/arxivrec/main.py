@@ -20,8 +20,9 @@ def main():
     top_df = df.iloc[top_k_indices]
 
     refined_df = fine_rank_with_llm(top_df)
-    print(refined_df[["id", "title", "Quality Score"]])
-    return refined_df.to_json(orient="records")
+
+    output_json = refined_df.to_json(orient="records")
+    return output_json
 
 
 if __name__ == "__main__":
