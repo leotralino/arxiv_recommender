@@ -1,0 +1,30 @@
+name: Daily ArXiv Recommender
+
+on:
+  schedule:
+    - cron: '0 16 * * *' # 8:00 AM PST daily
+  workflow_dispatch:
+
+jobs:
+  recommend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | bash
+          ollama serve & 
+          sleep 5 
+
+      - name: Pull Llama Model
+        run: ollama pull llama3.2:3b
+
+      - name: Set up Python and uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Run Recommender
+        run: uv run arxiv-rec
