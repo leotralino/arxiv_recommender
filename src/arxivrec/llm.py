@@ -91,7 +91,7 @@ def fine_rank_with_llm(top_papers_df: pd.DataFrame, user_interest: str = "RAG"):
     """
 
     response = ollama.generate(
-        model="llama3:8b",
+        model="llama3.2:3b",
         prompt=llm_ranking_prompt,
         format="json",
         options={"temperature": 0},
