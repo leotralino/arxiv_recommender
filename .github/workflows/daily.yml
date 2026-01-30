@@ -3,7 +3,10 @@ name: Daily ArXiv Recommender
 on:
   schedule:
     - cron: '0 16 * * *' # 8:00 AM PST daily
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Keeps the manual "Run" button in the UI
 
 jobs:
   recommend:
