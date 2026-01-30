@@ -31,3 +31,8 @@ jobs:
 
       - name: Run Recommender
         run: uv run arxiv-rec
+        env:
+          # GitHub Secret -> OS Environment Variable
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          NOTIFY_RECIPIENT: ${{ secrets.NOTIFY_RECIPIENT }}
