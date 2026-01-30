@@ -19,3 +19,17 @@ arxiv-rec = "arxiv_recommender.main:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+]
+
+[tool.ruff]
+# Enable linting and formatting for notebooks
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+# Specific rules: E (Error), F (Pyflakes), I (Isort/Imports)
+select = ["E", "F", "I"]
+fixable = ["ALL"]

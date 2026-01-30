@@ -18,8 +18,8 @@ jobs:
       - name: Install Ollama
         run: |
           curl -fsSL https://ollama.com/install.sh | bash
-          ollama serve & 
-          sleep 5 
+          ollama serve &
+          sleep 5
 
       - name: Pull Llama Model
         run: ollama pull llama3.2:3b
