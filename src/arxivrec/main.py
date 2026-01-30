@@ -22,7 +22,7 @@ def main():
     refined_df = fine_rank_with_llm(top_df)
 
     output_json = refined_df.to_json(orient="records")
-    return output_json
+    print(output_json)
 
 
 if __name__ == "__main__":
