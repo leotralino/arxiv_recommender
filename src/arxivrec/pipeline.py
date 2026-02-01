@@ -4,11 +4,16 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 from arxivrec.encoder import TextEncoder
-from arxivrec.fetcher import fetch_recent_papers
+from arxivrec.fetcher import ArxivFetcher
 from arxivrec.llm import OLLMRanker
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+class EmptyFetchExcpetion(Exception):
+    """No fetch result!"""
+
+    pass
 
 
 class BasePipeline(ABC):
@@ -28,19 +33,22 @@ class OLLMPipeline(BasePipeline):
     def __init__(
         self,
         user_interest: str = "I am interested in Retrieval-augmented generation (RAG).",
-        max_paper_to_fetch: int = 100,
         simsearch_top_k=10,
+        fetcher=None,
         encoder=None,
         ollm_ranker=None,
     ):
         super().__init__(user_interest)
-        self.max_paper_to_fetch = max_paper_to_fetch
         self.simsearch_top_k = simsearch_top_k
+        self.fetcher = fetcher or ArxivFetcher()
         self.encoder = encoder or TextEncoder()
         self.ollm_ranker = ollm_ranker or OLLMRanker()
 
     def recommend(self) -> pd.DataFrame:
-        df = fetch_recent_papers(max_results=self.max_paper_to_fetch)
+        df = self.fetcher.fetch()
+
+        if len(df) == 0:
+            raise EmptyFetchExcpetion("No arxiv articles fetched!!")
 
         my_interest_embedding = self.encoder.encode([self.user_interest])
         content_embedding = self.encoder.encode(df["combined_text"].tolist())
