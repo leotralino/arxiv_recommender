@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass
+@dataclass(frozen=True)
 class Topic:
     id: str = "AI"
     description: str = "Retrieval-augmented generation (RAG)"

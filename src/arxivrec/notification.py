@@ -9,7 +9,7 @@ class BaseNotifier:
     """Email, slack message, desktop alert, etc"""
 
     @abstractmethod
-    def notify(self):
+    def notify(self, **kwargs):
         pass
 
 
@@ -18,6 +18,7 @@ class EmailNotifier:
         self,
         subject: str = "Example subject",
         body_html: str = "Example email body",
+        **kwargs,
     ):
         self._send_email(subject=subject, body_html=body_html)
 

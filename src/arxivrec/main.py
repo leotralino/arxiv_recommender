@@ -17,8 +17,7 @@ def main():
     curr_topic = Topic(
         id="AI",
         description=(
-            "Retrieval augmented generation (RAG),"
-            "document parsing, table extraction",
+            "Retrieval augmented generation (RAG)," "document parsing, table extraction"
         ),
         categories=["cs.AI"],
     )
@@ -35,6 +34,8 @@ def main():
         ollm_ranker=ranker,
         notifier=notifier,
     )
+
+    logger.info(f"Created pipeline: {pipeline}")
 
     try:
         pipeline.recommend()

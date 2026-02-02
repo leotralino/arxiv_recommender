@@ -59,11 +59,25 @@ class OLLMPipeline(BasePipeline):
         self.df_recommendation = None
         self.notifier = notifier
 
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"topic='{self.topic.id if self.topic else None}', "
+            f"simsearch_top_k={self.simsearch_top_k}, "
+            f"fetcher={self.fetcher.__class__.__name__}(), "
+            f"encoder={self.encoder.__class__.__name__}(), "
+            f"ollm_ranker={self.ollm_ranker.__class__.__name__}(), "
+            f"notifier={self.notifier.__class__.__name__ if self.notifier else None}"
+            f")"
+        )
+
     def recommend(self) -> pd.DataFrame:
         df = self.fetcher.fetch()
 
         if len(df) == 0:
             raise EmptyFetchExcpetion("No items fetched!!")
+
+        logger.info("Start topic and content embedding...")
 
         my_interest_embedding = self.encoder.encode([self.topic.description])
         content_embedding = self.encoder.encode(df["combined_text"].tolist())
@@ -71,6 +85,8 @@ class OLLMPipeline(BasePipeline):
             my_interest_embedding, content_embedding, k=self.simsearch_top_k
         )
         df_simsearch = df.iloc[top_k_indices]
+
+        logger.info("Similarity search done!")
 
         self.df_recommendation = self.ollm_ranker.rank(
             self.topic.description, df_simsearch
