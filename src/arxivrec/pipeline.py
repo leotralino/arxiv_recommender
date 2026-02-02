@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 from arxivrec.encoder import TextEncoder
-from arxivrec.fetcher import ArxivFetcher
-from arxivrec.llm import OLLMRanker
+from arxivrec.fetcher import ArxivFetcher, BaseFetcher
+from arxivrec.llm import BaseRanker, OLLMRanker
 
 logger = logging.getLogger(__name__)
 
@@ -33,10 +33,10 @@ class OLLMPipeline(BasePipeline):
     def __init__(
         self,
         user_interest: str = "I am interested in Retrieval-augmented generation (RAG).",
-        simsearch_top_k=10,
-        fetcher=None,
-        encoder=None,
-        ollm_ranker=None,
+        simsearch_top_k: int = 10,
+        fetcher: BaseFetcher | None = None,
+        encoder: TextEncoder | None = None,
+        ollm_ranker: BaseRanker | None = None,
     ):
         super().__init__(user_interest)
         self.simsearch_top_k = simsearch_top_k
