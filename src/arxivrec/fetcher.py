@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 import arxiv
 import pandas as pd
 
+from arxivrec.topic import Topic
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,12 +19,12 @@ class BaseFetcher(ABC):
 class ArxivFetcher(BaseFetcher):
     def __init__(
         self,
-        categories: list[str] = ["cs.AI"],
+        topic: Topic,
         lookback_days: int = 1,
         max_results: int = 100,
     ):
         super().__init__()
-        self.categories = categories
+        self.categories = topic.categories
         self.lookback_days = lookback_days
         self.max_results = max_results
 
