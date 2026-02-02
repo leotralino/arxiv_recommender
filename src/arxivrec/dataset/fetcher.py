@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 
 import arxiv
 import pandas as pd
-
 from arxivrec.topic import Topic
 
 logger = logging.getLogger(__name__)

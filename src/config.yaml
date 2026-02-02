@@ -1,7 +1,11 @@
 topic:
-  id: "AI_Research"
-  description: "Retrieval augmented generation (RAG), document parsing, table extraction"
-  categories: ["cs.AI", "cs.LG"]
+  - id: "AI_Research"
+    description: "Retrieval augmented generation (RAG), document parsing, table extraction"
+    categories: ["cs.AI", "cs.LG"]
+
+  - id: "IceCube_Particle_Astrophysics"
+    description: "IceCube Neutrino Observatory, cosmic neutrinos, particle physics, dark matter searches, and high-energy astrophysical phenomena"
+    categories: ["astro-ph.HE", "hep-ex", "astro-ph.CO"]
 
 pipeline:
   simsearch_top_k: 10

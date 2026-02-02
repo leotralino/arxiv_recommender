@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-from arxivrec.encoder import TextEncoder
-from arxivrec.fetcher import ArxivFetcher, BaseFetcher
-from arxivrec.llm import BaseRanker, OLLMRanker
-from arxivrec.notification import BaseNotifier
+from arxivrec.dataset.fetcher import ArxivFetcher, BaseFetcher
+from arxivrec.engine.encoder import TextEncoder
+from arxivrec.engine.llm import BaseRanker, OLLMRanker
+from arxivrec.notify.notification import BaseNotifier
 from arxivrec.topic import Topic
 
 logger = logging.getLogger(__name__)
@@ -61,13 +61,13 @@ class OLLMPipeline(BasePipeline):
 
     def __repr__(self):
         return (
-            f"{self.__class__.__name__}("
-            f"topic='{self.topic.id if self.topic else None}', "
+            f"{self.__class__.__name__}"
+            f"topic='{self.topic}', "
             f"simsearch_top_k={self.simsearch_top_k}, "
-            f"fetcher={self.fetcher.__class__.__name__}(), "
-            f"encoder={self.encoder.__class__.__name__}(), "
-            f"ollm_ranker={self.ollm_ranker.__class__.__name__}(), "
-            f"notifier={self.notifier.__class__.__name__ if self.notifier else None}"
+            f"fetcher={self.fetcher}(), "
+            f"encoder={self.encoder}(), "
+            f"ollm_ranker={self.ollm_ranker}(), "
+            f"notifier={self.notifier}"
             f")"
         )
 

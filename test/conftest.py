@@ -1,5 +1,5 @@
 import pytest
-from arxivrec.encoder import TextEncoder
+from arxivrec.engine.encoder import TextEncoder
 
 
 @pytest.fixture

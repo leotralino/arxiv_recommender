@@ -41,4 +41,4 @@ class TextEncoder:
         return top_k_indices
 
     def __repr__(self):
-        return f"TextEncoder(model_name={self.model._first_module().name})"
+        return f"TextEncoder(model_name={self.model})"
