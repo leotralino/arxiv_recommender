@@ -1,0 +1,17 @@
+topic:
+  id: "AI_Research"
+  description: "Retrieval augmented generation (RAG), document parsing, table extraction"
+  categories: ["cs.AI", "cs.LG"]
+
+pipeline:
+  simsearch_top_k: 10
+  lookback_days: 4
+  max_results: 100
+
+models:
+  encoder: "sentence-transformers/all-MiniLM-L6-v2"
+  ranker: "llama3.2:3b"
+
+notifiers:
+  email:
+    enabled: true
