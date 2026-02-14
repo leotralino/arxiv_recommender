@@ -2,7 +2,7 @@ name: Daily ArXiv Recommender
 
 on:
   schedule:
-    - cron: '0 16 * * *' # 8:00 AM PST daily
+    - cron: '0 16 * * 1-5'  # 8:00 AM PST, Monday–Friday
   push:
     branches:
       - main
