@@ -12,6 +12,7 @@ dependencies = [
     "scikit-learn>=1.4.0",
     "ollama>=0.1.5",
     "pytest>=7.0.0",
+    "docling>=2.70.0",
 ]
 
 [project.scripts]

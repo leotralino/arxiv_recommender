@@ -9,7 +9,7 @@ topic:
 
 pipeline:
   simsearch_top_k: 10
-  lookback_days: 4
+  lookback_days: 1
   max_results: 100
 
 models:

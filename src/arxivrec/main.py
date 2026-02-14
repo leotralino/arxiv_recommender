@@ -6,7 +6,7 @@ import yaml
 
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
-from arxivrec.engine.llm import OLLMRanker
+from arxivrec.engine.ranker import OLLMRanker
 from arxivrec.notify.notification import EmailNotifier
 from arxivrec.pipeline import OLLMPipeline
 from arxivrec.topic import Topic

@@ -5,7 +5,7 @@ import pandas as pd
 
 from arxivrec.dataset.fetcher import ArxivFetcher, BaseFetcher
 from arxivrec.engine.encoder import TextEncoder
-from arxivrec.engine.llm import BaseRanker, OLLMRanker
+from arxivrec.engine.ranker import BaseRanker, OLLMRanker
 from arxivrec.notify.notification import BaseNotifier
 from arxivrec.topic import Topic
 

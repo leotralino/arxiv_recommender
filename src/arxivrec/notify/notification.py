@@ -13,7 +13,7 @@ class BaseNotifier:
         pass
 
 
-class EmailNotifier:
+class EmailNotifier(BaseNotifier):
     def notify(
         self,
         subject: str = "Example subject",
@@ -40,3 +40,8 @@ class EmailNotifier:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender, password)
             server.sendmail(sender, recipient, msg.as_string())
+
+
+class RSSNotifier(BaseNotifier):
+    def notify(self):
+        raise NotImplementedError("Please implement this feeder!")
