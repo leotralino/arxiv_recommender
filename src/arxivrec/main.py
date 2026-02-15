@@ -2,8 +2,6 @@ import argparse
 import logging
 import sys
 
-import yaml
-
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
 from arxivrec.engine.llm import LLM_REGISTRY
@@ -11,13 +9,9 @@ from arxivrec.engine.ranker import LLMRanker
 from arxivrec.notify.notification import NOTIFIER_REGISTRY
 from arxivrec.pipeline import LLMPipeline
 from arxivrec.topic import Topic
+from arxivrec.utils.config_parse import load_config
 
 logger = logging.getLogger(__name__)
-
-
-def load_config(config_path: str = "config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 
 def main():
@@ -27,8 +21,14 @@ def main():
 
     cfg = load_config(args.config)
 
-    logger.info(f"Supported LLMs: {LLM_REGISTRY.show_available()}")
-    logger.info(f"Supported Notifiers: {NOTIFIER_REGISTRY.show_available()}")
+    logger.info(f"""
+        ==========================================
+        INITIALIZING ARXIV RECOMMENDER
+        ------------------------------------------
+        LLMs:      {', '.join(LLM_REGISTRY.show_available())}
+        Notifiers: {', '.join(NOTIFIER_REGISTRY.show_available())}
+        ==========================================
+        """)
 
     topic_list = []
     for topic_data in cfg["topic"]:
@@ -48,7 +48,6 @@ def main():
     ranker = LLMRanker(client=LLM_REGISTRY[client_name](**client_args))
 
     notifier_list = []
-
     for type_param_pair in cfg["notifiers"]:
         for note_type, note_params in type_param_pair.items():
             note_class = NOTIFIER_REGISTRY[note_type]
