@@ -62,16 +62,23 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#usage-guide" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -113,7 +120,33 @@
     </div>
     
       
+        <form class="md-header__option" data-md-component="palette">
+  
     
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -234,6 +267,26 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -251,6 +304,64 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-engine-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the Engine Locally
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-configyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration (config.yaml)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration (config.yaml)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -300,6 +411,55 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-engine-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the Engine Locally
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-configyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration (config.yaml)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration (config.yaml)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -316,9 +476,45 @@
 
 
 
-  <h1>Usage</h1>
+<h1 id="usage-guide">Usage Guide</h1>
+<h2 id="running-the-engine-locally">Running the Engine Locally</h2>
+<p>The simplest way to run the recommender is using the provided <code>Makefile</code>:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>run
+</code></pre></div>
+<h2 id="configuration-configyaml">Configuration (<code>config.yaml</code>)</h2>
+<p>The engine is driven by a YAML configuration file. Here is a standard setup:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">topic</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AI_Research&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Retrieval</span><span class="nv"> </span><span class="s">augmented</span><span class="nv"> </span><span class="s">generation</span><span class="nv"> </span><span class="s">(RAG),</span><span class="nv"> </span><span class="s">document</span><span class="nv"> </span><span class="s">parsing,</span><span class="nv"> </span><span class="s">table</span><span class="nv"> </span><span class="s">extraction&quot;</span>
+<span class="w">    </span><span class="nt">categories</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;cs.AI&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;cs.LG&quot;</span><span class="p p-Indicator">]</span>
 
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IceCube_Particle_Astrophysics&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IceCube</span><span class="nv"> </span><span class="s">Neutrino</span><span class="nv"> </span><span class="s">Observatory,</span><span class="nv"> </span><span class="s">cosmic</span><span class="nv"> </span><span class="s">neutrinos,</span><span class="nv"> </span><span class="s">particle</span><span class="nv"> </span><span class="s">physics,</span><span class="nv"> </span><span class="s">dark</span><span class="nv"> </span><span class="s">matter</span><span class="nv"> </span><span class="s">searches,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">high-energy</span><span class="nv"> </span><span class="s">astrophysical</span><span class="nv"> </span><span class="s">phenomena&quot;</span>
+<span class="w">    </span><span class="nt">categories</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;astro-ph.HE&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;hep-ex&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;astro-ph.CO&quot;</span><span class="p p-Indicator">]</span>
 
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">simsearch_top_k</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">lookback_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">max_results</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+
+<span class="nt">models</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">encoder</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span>
+<span class="w">  </span><span class="nt">ranker</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ollama</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;llama3.2:3b&quot;</span>
+
+<span class="nt">notifiers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">email</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;smtp.gmail.com&quot;</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">465</span>
+</code></pre></div>
+<h3 id="command-line-arguments">Command Line Arguments</h3>
+<p>If you need to specify a custom configuration file:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>src/arxivrec/main.py<span class="w"> </span>--config<span class="w"> </span>path/to/your_config.yaml
+</code></pre></div>
+<p>!!! tip "Environment Variables"
+Ensure you have <code>EMAIL_PASSWORD</code> or other variables set as your environment variables if you are using specific providers.
+```</p>
 
 
 
