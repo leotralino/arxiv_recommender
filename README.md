@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/managed_by-uv-purple.svg" alt="Managed by uv">
   <img src="https://img.shields.io/badge/linting-ruff-6340ac.svg" alt="Linting by Ruff">
   <img src="https://img.shields.io/badge/inference-Ollama-white.svg?logo=ollama&logoColor=black" alt="Ollama">
-  <img src="https://img.shields.io/github/license/leotralino/arxiv_recommender" alt="License">
+  <img src="https://img.shields.io/github/license/leotralino/arxiv_recommender?color=blue" alt="License">
 </p>
 
 ---
