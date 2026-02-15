@@ -3,6 +3,9 @@ from abc import abstractmethod
 from typing import Optional
 
 import ollama
+from arxivrec.utils.registry import Registry
+
+LLM_REGISTRY = Registry("LLM")
 
 
 class BaseLLM:
@@ -18,6 +21,7 @@ class BaseLLM:
         pass
 
 
+@LLM_REGISTRY.register("ollama")
 class OLlamaLLM(BaseLLM):
     def __init__(
         self,
@@ -36,8 +40,9 @@ class OLlamaLLM(BaseLLM):
         return response
 
 
+@LLM_REGISTRY.register("openai")
 class OpenaiLLM(BaseLLM):
-    def __init__(self, model_name: str = "gpt-5.1", api_key: str = None):
+    def __init__(self, model_name: str = "gpt-5.1-instant", api_key: str = None):
         super().__init__(model_name)
         from openai import OpenAI
 

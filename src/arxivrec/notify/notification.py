@@ -4,6 +4,10 @@ from abc import ABC, abstractmethod
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from arxivrec.utils.registry import Registry
+
+NOTIFIER_REGISTRY = Registry("Notifier")
+
 
 class BaseNotifier(ABC):
     """Email, slack message, desktop alert, etc"""
@@ -13,6 +17,7 @@ class BaseNotifier(ABC):
         pass
 
 
+@NOTIFIER_REGISTRY.register("email")
 class EmailNotifier(BaseNotifier):
     def __init__(self, host: str = "smtp.gmail.com", port: int = 465):
         self.host = host
@@ -62,11 +67,13 @@ class EmailNotifier(BaseNotifier):
         self._send_email(subject=subject, body_html=body_html)
 
 
+@NOTIFIER_REGISTRY.register("slack")
 class SlackNotifier(BaseNotifier):
     def notify(self):
         raise NotImplementedError("Please implement this feeder!")
 
 
+@NOTIFIER_REGISTRY.register("rss")
 class RSSNotifier(BaseNotifier):
     def notify(self):
         raise NotImplementedError("Please implement this feeder!")

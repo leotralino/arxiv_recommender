@@ -3,21 +3,16 @@ import logging
 import sys
 
 import yaml
-from dotenv import load_dotenv
 
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
-from arxivrec.engine.llm import OLlamaLLM, OpenaiLLM
+from arxivrec.engine.llm import LLM_REGISTRY
 from arxivrec.engine.ranker import LLMRanker
-from arxivrec.notify.notification import EmailNotifier, RSSNotifier, SlackNotifier
+from arxivrec.notify.notification import NOTIFIER_REGISTRY
 from arxivrec.pipeline import LLMPipeline
 from arxivrec.topic import Topic
-from arxivrec.utils.logger import setup_logging
 
-setup_logging()
 logger = logging.getLogger(__name__)
-
-load_dotenv()
 
 
 def load_config(config_path: str = "config.yaml"):
@@ -46,23 +41,14 @@ def main():
 
     encoder = TextEncoder(model_name=cfg["models"]["encoder"])
 
-    LLM_NAME_MAPPING = {
-        "ollama": OLlamaLLM,
-        "openai": OpenaiLLM,
-    }
     client_name, client_args = next(iter(cfg["models"]["ranker"].items()))
-    ranker = LLMRanker(client=LLM_NAME_MAPPING[client_name](**client_args))
+    ranker = LLMRanker(client=LLM_REGISTRY[client_name](**client_args))
 
     notifier_list = []
-    NOTIFIER_NAME_MAPPING = {
-        "email": EmailNotifier,
-        "slack": SlackNotifier,
-        "rss": RSSNotifier,
-    }
 
     for type_param_pair in cfg["notifiers"]:
         for note_type, note_params in type_param_pair.items():
-            note_class = NOTIFIER_NAME_MAPPING[note_type]
+            note_class = NOTIFIER_REGISTRY[note_type]
             logger.info(f"Adding notifier: {note_class.__name__}")
             notifier_list.append(note_class(**{k: v for k, v in note_params.items()}))
 
