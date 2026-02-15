@@ -1,6 +1,12 @@
 import logging
 import sys
 
+from rich.box import DOUBLE_EDGE  # Or HEAVY, SQUARE, etc.
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+
 
 class CustomFormatter(logging.Formatter):
     MAGENTA = "\033[35m"
@@ -43,3 +49,52 @@ def setup_logging():
         formatter = CustomFormatter(datefmt="%Y-%m-%d %H:%M:%S")
         handler.setFormatter(formatter)
         root_logger.addHandler(handler)
+
+
+def show_topic_table(topic_list):
+    console = Console()
+
+    table = Table(
+        title="[bold blue]ArXiv Topics to Process[/bold blue]",
+        show_header=True,
+        header_style="bold white",
+        show_lines=True,  # This adds the horizontal lines between rows
+        box=DOUBLE_EDGE,  # This adds the outer and inner vertical boundaries
+    )
+
+    table.add_column("ID", style="cyan", justify="center")
+    table.add_column("Categories", style="green")
+    table.add_column(
+        "Description", style="magenta", width=50
+    )  # Prevents long text from breaking the grid
+
+    for t in topic_list:
+        table.add_row(t.id, ", ".join(t.categories), t.description)
+
+    console.print(table)
+
+
+def show_registry_table(LLM_REGISTRY, NOTIFIER_REGISTRY):
+    console = Console()
+
+    llm_text = Text.assemble(
+        ("LLMs:      ", "bold white"),
+        (", ".join(LLM_REGISTRY.show_available()), "cyan"),
+    )
+    note_text = Text.assemble(
+        ("Notifiers: ", "bold white"),
+        (", ".join(NOTIFIER_REGISTRY.show_available()), "green"),
+    )
+
+    content = Text.assemble(llm_text, "\n", note_text)
+
+    panel = Panel(
+        content,
+        title="[bold blue]Registered Modules[/bold blue]",
+        subtitle="[dim]Change in config.yaml if needed[/dim]",
+        expand=True,
+        border_style="bright_blue",
+        padding=(1, 2),
+    )
+
+    console.print(panel)

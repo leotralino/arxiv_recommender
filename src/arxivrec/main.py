@@ -10,6 +10,7 @@ from arxivrec.notify.notification import NOTIFIER_REGISTRY
 from arxivrec.pipeline import LLMPipeline
 from arxivrec.topic import Topic
 from arxivrec.utils.config_parse import load_config
+from arxivrec.utils.logger import show_registry_table, show_topic_table
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +22,7 @@ def main():
 
     cfg = load_config(args.config)
 
-    logger.info(f"""
-        ==========================================
-        INITIALIZING ARXIV RECOMMENDER
-        ------------------------------------------
-        LLMs:      {', '.join(LLM_REGISTRY.show_available())}
-        Notifiers: {', '.join(NOTIFIER_REGISTRY.show_available())}
-        ==========================================
-        """)
+    show_registry_table(LLM_REGISTRY, NOTIFIER_REGISTRY)
 
     topic_list = []
     for topic_data in cfg["topic"]:
@@ -41,6 +35,8 @@ def main():
                 categories=topic_data["categories"],
             )
         )
+
+    show_topic_table(topic_list=topic_list)
 
     encoder = TextEncoder(model_name=cfg["models"]["encoder"])
 
