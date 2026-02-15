@@ -27,6 +27,9 @@ def main():
 
     cfg = load_config(args.config)
 
+    logger.info(f"Supported LLMs: {LLM_REGISTRY.show_available()}")
+    logger.info(f"Supported Notifiers: {NOTIFIER_REGISTRY.show_available()}")
+
     topic_list = []
     for topic_data in cfg["topic"]:
         logger.info(f"Processing Topic: {topic_data['id']}")
