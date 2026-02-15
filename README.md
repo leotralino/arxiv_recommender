@@ -26,7 +26,7 @@
 2. **Coarse Filtering:** High-speed semantic search using `sentence-transformers` (Bi-Encoders) to prune hundreds of papers based on your embedding profile.
 3. **Fine Ranking:** LLM-as-a-Judge (local via Ollama) to rank the top candidates with qualitative reasoning.
 
-## Quick Start — GitHub Actions (recommended)
+## ⚡ Quick Start — GitHub Actions (recommended)
 
 - Fork this repository on GitHub. The included GitHub Actions workflow (defined in `.github/workflows/daily.yaml`) will run the recommender on a schedule for you. By default, the workflow is scheduled to run at 16:00 UTC (8:00 AM PST); GitHub Actions uses UTC, so local Pacific time may shift with Daylight Saving Time.
 - Add the following GitHub Secrets to your fork (Settings → Secrets → Actions) to enable email notifications:
