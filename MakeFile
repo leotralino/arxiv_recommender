@@ -1,0 +1,32 @@
+# Default shell for Makefile
+SHELL := /bin/zsh
+
+.PHONY: run docs deploy clean test
+
+# Run the recommendation engine
+run:
+	uv run python src/arxivrec/main.py
+
+# Run the engine with a specific config
+# usage: make run-cfg CONFIG=my_config.yaml
+run-cfg:
+	uv run python src/arxivrec/main.py --config $(CONFIG)
+
+# Serve the documentation locally for preview
+docs:
+	uv run mkdocs serve
+
+# Deploy documentation to GitHub Pages
+site:
+	uv run mkdocs gh-deploy --force
+
+# Run tests with coverage
+test-cov:
+	uv run pytest --cov=src --cov-report=term-missing
+
+# Clean up build artifacts and cache
+clean:
+	rm -rf site/
+	rm -rf htmlcov/
+	rm -rf .pytest_cache/
+	find . -type d -name "__pycache__" -exec rm -rf {} +
