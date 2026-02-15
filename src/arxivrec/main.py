@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
-from arxivrec.engine.ranker import OLLMRanker
+from arxivrec.engine.llm import OLlamaLLM, OpenaiLLM
+from arxivrec.engine.ranker import LLMRanker
 from arxivrec.notify.notification import EmailNotifier, RSSNotifier, SlackNotifier
-from arxivrec.pipeline import OLLMPipeline
+from arxivrec.pipeline import LLMPipeline
 from arxivrec.topic import Topic
 from arxivrec.utils.logger import setup_logging
 
@@ -44,7 +45,13 @@ def main():
         )
 
     encoder = TextEncoder(model_name=cfg["models"]["encoder"])
-    ranker = OLLMRanker(model_name=cfg["models"]["ranker"])
+
+    LLM_NAME_MAPPING = {
+        "ollama": OLlamaLLM,
+        "openai": OpenaiLLM,
+    }
+    client_name, client_args = next(iter(cfg["models"]["ranker"].items()))
+    ranker = LLMRanker(client=LLM_NAME_MAPPING[client_name](**client_args))
 
     notifier_list = []
     NOTIFIER_NAME_MAPPING = {
@@ -66,12 +73,12 @@ def main():
             max_results=cfg["pipeline"]["max_results"],
         )
 
-        pipeline = OLLMPipeline(
+        pipeline = LLMPipeline(
             topic=curr_topic,
             simsearch_top_k=cfg["pipeline"]["simsearch_top_k"],
             fetcher=fetcher,
             encoder=encoder,
-            ollm_ranker=ranker,
+            llm_ranker=ranker,
             notifier_list=notifier_list,
         )
 

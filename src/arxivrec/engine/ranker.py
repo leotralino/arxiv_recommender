@@ -2,7 +2,6 @@ import json
 import logging
 from abc import ABC, abstractmethod
 
-import ollama
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -14,9 +13,9 @@ class BaseRanker(ABC):
         pass
 
 
-class OLLMRanker(BaseRanker):
-    def __init__(self, model_name: str = "llama3.2:3b"):
-        self.model_name = model_name
+class LLMRanker(BaseRanker):
+    def __init__(self, client):
+        self.client = client
 
     def _get_authors(self, author_list: list[str]):
         """
@@ -101,12 +100,7 @@ class OLLMRanker(BaseRanker):
         }}
         """  # noqa: E501
 
-        response = ollama.generate(
-            model=self.model_name,
-            prompt=llm_ranking_prompt,
-            format="json",
-            options={"temperature": 0},
-        )
+        response = self.client.call(llm_ranking_prompt)
 
         llm_output = self._parse_llm_output(response["response"])
         logger.info(f"LLM Output: {llm_output}")

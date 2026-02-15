@@ -14,7 +14,9 @@ pipeline:
 
 models:
   encoder: "sentence-transformers/all-MiniLM-L6-v2"
-  ranker: "llama3.2:3b"
+  ranker:
+    ollama:
+      model_name: "llama3.2:3b"
 
 notifiers:
   - email:

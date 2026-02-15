@@ -6,7 +6,7 @@ import pandas as pd
 
 from arxivrec.dataset.fetcher import ArxivFetcher, BaseFetcher
 from arxivrec.engine.encoder import TextEncoder
-from arxivrec.engine.ranker import BaseRanker, OLLMRanker
+from arxivrec.engine.ranker import BaseRanker, LLMRanker
 from arxivrec.notify.notification import BaseNotifier, EmailNotifier
 from arxivrec.topic import Topic
 
@@ -42,21 +42,21 @@ class BasePipeline(ABC):
         pass
 
 
-class OLLMPipeline(BasePipeline):
+class LLMPipeline(BasePipeline):
     def __init__(
         self,
         topic: Topic | None = None,
         simsearch_top_k: int = 10,
         fetcher: BaseFetcher | None = None,
         encoder: TextEncoder | None = None,
-        ollm_ranker: BaseRanker | None = None,
+        llm_ranker: BaseRanker | None = None,
         notifier_list: List[BaseNotifier] | None = None,
     ):
         super().__init__(topic)
         self.simsearch_top_k = simsearch_top_k
         self.fetcher = fetcher or ArxivFetcher()
         self.encoder = encoder or TextEncoder()
-        self.ollm_ranker = ollm_ranker or OLLMRanker()
+        self.llm_ranker = llm_ranker or LLMRanker()
         self.df_recommendation = None
         self.notifier_list = notifier_list or [EmailNotifier()]
 
@@ -67,7 +67,7 @@ class OLLMPipeline(BasePipeline):
             f"simsearch_top_k={self.simsearch_top_k}, "
             f"fetcher={self.fetcher}(), "
             f"encoder={self.encoder}(), "
-            f"ollm_ranker={self.ollm_ranker}(), "
+            f"llm_ranker={self.llm_ranker}(), "
             f"all notifiers={self.notifier_list}"
             f")"
         )
@@ -89,7 +89,7 @@ class OLLMPipeline(BasePipeline):
 
         logger.info("Similarity search done!")
 
-        self.df_recommendation = self.ollm_ranker.rank(
+        self.df_recommendation = self.llm_ranker.rank(
             self.topic.description, df_simsearch
         )
 

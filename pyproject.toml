@@ -13,6 +13,10 @@ dependencies = [
     "ollama>=0.1.5",
     "pytest>=7.0.0",
     "docling>=2.70.0",
+    "openai>=1.0.0",
+    "google-generativeai",
+    "anthropic",
+    "tiktoken",
 ]
 
 [project.scripts]
