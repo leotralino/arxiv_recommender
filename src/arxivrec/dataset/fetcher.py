@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 import arxiv
 import pandas as pd
 from arxivrec.topic import Topic
+from arxivrec.utils.fallback import fallback
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +28,15 @@ class ArxivFetcher(BaseFetcher):
         self.lookback_days = lookback_days
         self.max_results = max_results
 
-    def fetch(self):
+    @fallback("lookback_days", [2, 4])
+    def fetch(self, **kwargs):
         """
         Fetches papers from specific categories within a time window.
         """
+
+        # for fallback purpose only
+        _lookback_days = kwargs.get("lookback_days", self.lookback_days)
+
         # 1. Build Query (e.g., "cat:cs.LG OR cat:cs.AI")
         query = " OR ".join([f"cat:{c}" for c in self.categories])
 
@@ -48,7 +54,7 @@ class ArxivFetcher(BaseFetcher):
 
         # 2. Time Window
         threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-            days=self.lookback_days
+            days=_lookback_days
         )
 
         results = []
