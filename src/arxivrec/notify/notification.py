@@ -13,7 +13,7 @@ class BaseNotifier:
         pass
 
 
-class EmailNotifier(BaseNotifier):
+class GMailNotifier(BaseNotifier):
     def notify(
         self,
         subject: str = "Example subject",
@@ -30,6 +30,23 @@ class EmailNotifier(BaseNotifier):
         sender = os.getenv("EMAIL_USERNAME")
         password = os.getenv("EMAIL_PASSWORD")
         recipient = os.getenv("NOTIFY_RECIPIENT")
+
+        if not all([sender, password, recipient]):
+            missing = [
+                k
+                for k, v in {
+                    "EMAIL_USERNAME": sender,
+                    "EMAIL_PASSWORD": password,
+                    "NOTIFY_RECIPIENT": recipient,
+                }.items()
+                if not v
+            ]
+            raise ValueError(
+                f"Missing required environment variables for email:"
+                f"{', '.join(missing)}"
+                f"Please set on your Github's forked repo:"
+                f"Settings -> Secrets and variables -> Actions"
+            )
 
         msg = MIMEMultipart()
         msg["Subject"] = subject

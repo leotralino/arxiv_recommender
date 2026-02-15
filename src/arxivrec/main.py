@@ -7,7 +7,7 @@ import yaml
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
 from arxivrec.engine.ranker import OLLMRanker
-from arxivrec.notify.notification import EmailNotifier
+from arxivrec.notify.notification import GMmailNotifier
 from arxivrec.pipeline import OLLMPipeline
 from arxivrec.topic import Topic
 from arxivrec.utils.logger import setup_logging
@@ -42,7 +42,7 @@ def main():
 
     encoder = TextEncoder(model_name=cfg["models"]["encoder"])
     ranker = OLLMRanker(model_name=cfg["models"]["ranker"])
-    notifier = EmailNotifier()
+    notifier = GMmailNotifier()
 
     for curr_topic in topic_list:
         fetcher = ArxivFetcher(
