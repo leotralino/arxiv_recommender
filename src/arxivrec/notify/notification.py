@@ -32,9 +32,9 @@ class EmailNotifier(BaseNotifier):
                 if not v
             ]
             raise ValueError(
-                f"Missing required environment variables for email:"
-                f"{', '.join(missing)}"
-                f"Please set on your Github's forked repo:"
+                f"Missing required environment variables for email:\n"
+                f"{', '.join(missing)}\n"
+                f"Please set on your Github's forked repo:\n"
                 f"Settings -> Secrets and variables -> Actions"
             )
 
@@ -60,11 +60,6 @@ class EmailNotifier(BaseNotifier):
         **kwargs,
     ):
         self._send_email(subject=subject, body_html=body_html)
-
-
-class GMailNotifier(EmailNotifier):
-    def __init__(self):
-        super().__init__(host="smtp.gmail.com", port=465)
 
 
 class SlackNotifier(BaseNotifier):

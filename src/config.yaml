@@ -17,5 +17,6 @@ models:
   ranker: "llama3.2:3b"
 
 notifiers:
-  email:
-    enabled: true
+  - email:
+      host: "smtp.gmail.com"
+      port: 465

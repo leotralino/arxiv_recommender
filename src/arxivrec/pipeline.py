@@ -1,12 +1,13 @@
 import logging
 from abc import ABC, abstractmethod
+from typing import List
 
 import pandas as pd
 
 from arxivrec.dataset.fetcher import ArxivFetcher, BaseFetcher
 from arxivrec.engine.encoder import TextEncoder
 from arxivrec.engine.ranker import BaseRanker, OLLMRanker
-from arxivrec.notify.notification import BaseNotifier
+from arxivrec.notify.notification import BaseNotifier, EmailNotifier
 from arxivrec.topic import Topic
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,7 @@ class OLLMPipeline(BasePipeline):
         fetcher: BaseFetcher | None = None,
         encoder: TextEncoder | None = None,
         ollm_ranker: BaseRanker | None = None,
-        notifier: BaseNotifier | None = None,
+        notifier_list: List[BaseNotifier] | None = None,
     ):
         super().__init__(topic)
         self.simsearch_top_k = simsearch_top_k
@@ -57,7 +58,7 @@ class OLLMPipeline(BasePipeline):
         self.encoder = encoder or TextEncoder()
         self.ollm_ranker = ollm_ranker or OLLMRanker()
         self.df_recommendation = None
-        self.notifier = notifier
+        self.notifier_list = notifier_list or [EmailNotifier()]
 
     def __repr__(self):
         return (
@@ -67,7 +68,7 @@ class OLLMPipeline(BasePipeline):
             f"fetcher={self.fetcher}(), "
             f"encoder={self.encoder}(), "
             f"ollm_ranker={self.ollm_ranker}(), "
-            f"notifier={self.notifier}"
+            f"all notifiers={self.notifier_list}"
             f")"
         )
 
@@ -118,10 +119,12 @@ class OLLMPipeline(BasePipeline):
             email_full_body = EMAIL_TEMPLATE.format(
                 my_interest=self.topic.description, input_html_table=html_table
             )
-            self.notifier.notify(
-                subject="📚 Your Daily ArXiv Digest", body_html=email_full_body
-            )
-            logger.info("Email notification sent successfully!")
+
+            for _notifier in self.notifier_list:
+                _notifier.notify(
+                    subject="📚 Your Daily ArXiv Digest", body_html=email_full_body
+                )
+                logger.info(f"{_notifier} notification sent successfully!")
 
         except Exception:
             raise EmailFailExcpetion("Failed to send email notification!")
