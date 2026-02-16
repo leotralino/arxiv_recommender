@@ -1,7 +1,7 @@
 # Default shell for Makefile
 SHELL := /bin/zsh
 
-.PHONY: run docs deploy clean test
+.PHONY: run docs deploy clean test site
 
 # Run the recommendation engine
 run:
