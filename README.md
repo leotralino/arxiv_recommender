@@ -35,6 +35,19 @@
   - `NOTIFY_RECIPIENT` — recipient email address for recommendations.
 - Your research interests, ranking hyperparameters, local model selection, and other settings can be configured in `src/config.yaml`.
 
+
+## 📝 Roadmap
+
+- [ ] Support OpenAI, Anthropic, and Google Gemini (e.g. LiteLLM) alongside Ollama.
+- [ ] Incorporate parser for more accurate reranking.
+- [ ] Combine semantic search with traditional heuristics (e.g., filtering by specific authors, institutions, or h-index).
+- [ ] CrossEncoder to refine the coarse ranking results.
+- [ ] Allow users to "Thumbs Up/Down" recommendations to dynamically adjust the next query.
+- [ ] For large corpuses, use vector DB for scalable similarity search.
+- [ ] `asyncio` for faster API calls.
+- [ ] Export selected papers directly to `.bib` files or Zotero.
+- [ ] "History" mode: what are most important papers in the field given interest?
+
 ## 📦 Local Installation (Optional)
 
 Ensure you have [uv](https://docs.astral.sh/uv/) and [Ollama](https://ollama.com/) installed.
