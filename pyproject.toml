@@ -31,6 +31,7 @@ build-backend = "hatchling.build"
 dev = [
     "mkdocs-material>=9.7.1",
     "mkdocstrings[python]>=1.0.3",
+    "mypy>=1.19.1",
     "pre-commit>=4.5.1",
     "pytest-cov>=7.0.0",
 ]
@@ -44,3 +45,9 @@ line-length = 88
 # Specific rules: E (Error), F (Pyflakes), I (Isort/Imports)
 select = ["E", "F", "I"]
 fixable = ["ALL"]
+
+[tool.mypy]
+ignore_missing_imports = true
+check_untyped_defs = true
+disallow_untyped_calls = false
+disallow_untyped_defs = false

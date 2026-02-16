@@ -3,15 +3,16 @@ from abc import abstractmethod
 from typing import Optional
 
 import ollama
+
 from arxivrec.utils.registry import Registry
 
 LLM_REGISTRY = Registry("LLM")
 
 
 class BaseLLM:
-    def __init__(self, model_name: str, options: dict, **kwargs):
-        self.model_name = model_name
-        self.options = options
+    def __init__(self, model_name: str, options: dict | None = None, **kwargs):
+        self.model_name: str = model_name
+        self.options: dict | None = options
 
     @abstractmethod
     def call(self, prompt):
@@ -26,15 +27,19 @@ class OLlamaLLM(BaseLLM):
     def __init__(
         self,
         model_name: str = "llama3.2:3b",
+        options: dict | None = None,
     ):
-        self.model_name = model_name
+        super().__init__(model_name, options)
 
     def call(self, prompt):
+        if not self.options:
+            self.options = {"temperature": 0}
+
         response = ollama.generate(
             model=self.model_name,
             prompt=prompt,
             format="json",
-            options={"temperature": 0},
+            options=self.options,
         )
 
         return response
@@ -42,7 +47,7 @@ class OLlamaLLM(BaseLLM):
 
 @LLM_REGISTRY.register("openai")
 class OpenaiLLM(BaseLLM):
-    def __init__(self, model_name: str = "gpt-5.1-instant", api_key: str = None):
+    def __init__(self, model_name: str = "gpt-5.1-instant", api_key: str = ""):
         super().__init__(model_name)
         from openai import OpenAI
 

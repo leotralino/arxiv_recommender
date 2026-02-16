@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
+from arxivrec.engine.llm import BaseLLM
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,10 +16,10 @@ class BaseRanker(ABC):
 
 
 class LLMRanker(BaseRanker):
-    def __init__(self, client):
+    def __init__(self, client: BaseLLM):
         self.client = client
 
-    def _get_authors(self, author_list: list[str]):
+    def _get_authors(self, author_list: list[str]) -> str:
         """
         Formats the author list for LLM input, truncating if too long.
         """
@@ -32,7 +34,7 @@ class LLMRanker(BaseRanker):
 
         return author_string
 
-    def _parse_llm_output(self, response_text: str):
+    def _parse_llm_output(self, response_text: str) -> list[dict]:
         """
         Sometimes LLM does not give list of JSON, so return {"paper": [...]} instead.
         Then parse it accordingly.
@@ -48,7 +50,7 @@ class LLMRanker(BaseRanker):
                     return data[key]
         return []
 
-    def rank(self, user_interest: str, top_papers_df: pd.DataFrame):
+    def rank(self, user_interest: str, top_papers_df: pd.DataFrame) -> pd.DataFrame:
         """
         Uses a local LLM to decide top candidates.
         """

@@ -22,9 +22,9 @@ class EmailNotifier(BaseNotifier):
     def __init__(self, host: str = "smtp.gmail.com", port: int = 465):
         self.host = host
         self.port = port
-        self.sender = os.getenv("EMAIL_USERNAME")
-        self.password = os.getenv("EMAIL_PASSWORD")
-        self.recipient = os.getenv("NOTIFY_RECIPIENT")
+        self.sender = os.getenv("EMAIL_USERNAME") or ""
+        self.password = os.getenv("EMAIL_PASSWORD") or ""
+        self.recipient = os.getenv("NOTIFY_RECIPIENT") or ""
 
         if not all([self.sender, self.password, self.recipient]):
             missing = [
@@ -69,11 +69,11 @@ class EmailNotifier(BaseNotifier):
 
 @NOTIFIER_REGISTRY.register("slack")
 class SlackNotifier(BaseNotifier):
-    def notify(self):
+    def notify(self, **kwargs):
         raise NotImplementedError("Please implement this feeder!")
 
 
 @NOTIFIER_REGISTRY.register("rss")
 class RSSNotifier(BaseNotifier):
-    def notify(self):
+    def notify(self, **kwargs):
         raise NotImplementedError("Please implement this feeder!")

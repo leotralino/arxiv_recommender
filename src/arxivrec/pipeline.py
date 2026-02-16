@@ -1,12 +1,11 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import List
 
 import pandas as pd
 
-from arxivrec.dataset.fetcher import ArxivFetcher, BaseFetcher
+from arxivrec.dataset.fetcher import BaseFetcher
 from arxivrec.engine.encoder import TextEncoder
-from arxivrec.engine.ranker import BaseRanker, LLMRanker
+from arxivrec.engine.ranker import BaseRanker
 from arxivrec.notify.notification import BaseNotifier, EmailNotifier
 from arxivrec.topic import Topic
 
@@ -38,26 +37,26 @@ class BasePipeline(ABC):
         pass
 
     @abstractmethod
-    def notify(self):
+    def notify(self) -> None:
         pass
 
 
 class LLMPipeline(BasePipeline):
     def __init__(
         self,
-        topic: Topic | None = None,
-        simsearch_top_k: int = 10,
-        fetcher: BaseFetcher | None = None,
-        encoder: TextEncoder | None = None,
-        llm_ranker: BaseRanker | None = None,
-        notifier_list: List[BaseNotifier] | None = None,
+        topic: Topic,
+        simsearch_top_k: int,
+        fetcher: BaseFetcher,
+        encoder: TextEncoder,
+        llm_ranker: BaseRanker,
+        notifier_list: list[BaseNotifier],
     ):
         super().__init__(topic)
         self.simsearch_top_k = simsearch_top_k
-        self.fetcher = fetcher or ArxivFetcher()
-        self.encoder = encoder or TextEncoder()
-        self.llm_ranker = llm_ranker or LLMRanker()
-        self.df_recommendation = None
+        self.fetcher = fetcher
+        self.encoder = encoder
+        self.llm_ranker = llm_ranker
+        self.df_recommendation: pd.DataFrame | None = None
         self.notifier_list = notifier_list or [EmailNotifier()]
 
     def __repr__(self):
@@ -75,7 +74,7 @@ class LLMPipeline(BasePipeline):
     def recommend(self) -> pd.DataFrame:
         df = self.fetcher.fetch()
 
-        if len(df) == 0:
+        if df is None or len(df) == 0:
             raise EmptyFetchExcpetion("No items fetched!!")
 
         logger.info("Start topic and content embedding...")
@@ -93,9 +92,11 @@ class LLMPipeline(BasePipeline):
             self.topic.description, df_simsearch
         )
 
-        logger.info(
-            f"Recommended articles: {self.df_recommendation.to_json(orient="records")}"
-        )
+        if self.df_recommendation is not None:
+            logger.info(
+                f"Recommended articles:"
+                f"{self.df_recommendation.to_json(orient='records')}"
+            )
 
         return self.df_recommendation
 
@@ -111,6 +112,8 @@ class LLMPipeline(BasePipeline):
         """
 
         try:
+            assert self.df_recommendation is not None
+
             email_columns = ["title", "reasoning", "url"]
             html_table = self.df_recommendation[email_columns].to_html(
                 index=False, render_links=True

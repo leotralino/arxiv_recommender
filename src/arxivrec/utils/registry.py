@@ -7,8 +7,8 @@ class Registry:
     """A generic registry to store and retrieve classes."""
 
     def __init__(self, name: str):
-        self.name = name
-        self._classes = {}
+        self.name: str = name
+        self._classes: dict = {}
 
         logger.debug(f"Registry {self.name} created!")
 
@@ -38,7 +38,7 @@ class Registry:
         return self.get(key)
 
     def __repr__(self):
-        return f"Registry({self.name}, available={self.list_available()})"
+        return f"Registry({self.name}, available={self.show_available()})"
 
     def __iter__(self):
         return iter(self._classes)
