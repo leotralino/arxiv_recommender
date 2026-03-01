@@ -1,6 +1,5 @@
 import os
 from abc import abstractmethod
-from typing import Optional
 
 import ollama
 
@@ -47,21 +46,42 @@ class OLlamaLLM(BaseLLM):
 
 @LLM_REGISTRY.register("openai")
 class OpenaiLLM(BaseLLM):
-    def __init__(self, model_name: str = "gpt-5.1-instant", api_key: str = ""):
-        super().__init__(model_name)
-        from openai import OpenAI
+    def __init__(
+        self,
+        model_name: str = "openai/gpt-5.1-instant",
+        api_key: str = "",
+        api_base: str = "",
+        options: dict | None = None,
+        **kwargs,
+    ):
+        super().__init__(model_name, options)
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.api_base = api_base or os.getenv("OPENAI_API_BASE")
+        self.kwargs = kwargs
 
-        self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+    def call(self, prompt: str) -> dict:
+        from litellm import completion
 
-    def call(self, prompt: str, system_prompt: Optional[str] = None) -> str:
         messages = []
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            response_format={"type": "json_object"},
-        )
-        return response.choices[0].message.content
+        completion_kwargs = {
+            "model": self.model_name,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+        }
+        if self.options:
+            completion_kwargs.update(self.options)
+        if self.api_key:
+            completion_kwargs["api_key"] = self.api_key
+        if self.api_base:
+            completion_kwargs["api_base"] = self.api_base
+        if self.kwargs:
+            completion_kwargs.update(self.kwargs)
+
+        response = completion(**completion_kwargs)
+        content = response.choices[0].message.content
+        if isinstance(content, list):
+            content = "".join(c.get("text", "") for c in content if isinstance(c, dict))
+
+        return {"response": content, "raw_response": response}
