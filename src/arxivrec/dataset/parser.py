@@ -1,12 +1,10 @@
-import logging
 from typing import Dict
 
 from bs4 import BeautifulSoup
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class DoclingArxivParser:
@@ -65,10 +63,6 @@ class DoclingArxivParser:
 
 
 if __name__ == "__main__":
-    from arxivrec.utils.logger import setup_logging
-
-    setup_logging()
-
     parser = DoclingArxivParser()
     paper_data = parser.parse_paper("https://arxiv.org/pdf/2408.09869.pdf")
     print(paper_data)

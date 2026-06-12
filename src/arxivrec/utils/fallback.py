@@ -1,7 +1,6 @@
 import functools
-import logging
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def fallback(arg_name: str, fallback_values: list):

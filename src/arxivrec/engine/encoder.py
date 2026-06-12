@@ -1,9 +1,5 @@
-import logging
-
 import numpy as np
 from sentence_transformers import SentenceTransformer
-
-logger = logging.getLogger(__name__)
 
 
 class TextEncoder:

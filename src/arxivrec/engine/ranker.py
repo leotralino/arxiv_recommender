@@ -1,12 +1,10 @@
 import json
-import logging
 from abc import ABC, abstractmethod
 
 import pandas as pd
+from loguru import logger
 
 from arxivrec.engine.llm import BaseLLM
-
-logger = logging.getLogger(__name__)
 
 
 class BaseRanker(ABC):

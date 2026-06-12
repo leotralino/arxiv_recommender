@@ -1,13 +1,12 @@
 import datetime
-import logging
 from abc import ABC, abstractmethod
 
 import arxiv
 import pandas as pd
+from loguru import logger
+
 from arxivrec.topic import Topic
 from arxivrec.utils.fallback import fallback
-
-logger = logging.getLogger(__name__)
 
 
 class BaseFetcher(ABC):

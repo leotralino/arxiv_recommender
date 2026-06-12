@@ -31,15 +31,19 @@ class OLlamaLLM(BaseLLM):
         super().__init__(model_name, options)
 
     def call(self, prompt):
-        options = self.options if self.options else {"temperature": 0}
+        options = dict(self.options) if self.options else {"temperature": 0}
+        think = options.pop("think", None)
 
-        response = ollama.generate(
-            model=self.model_name,
-            prompt=prompt,
-            format="json",
-            options=options,
-        )
+        kwargs = {
+            "model": self.model_name,
+            "prompt": prompt,
+            "format": "json",
+            "options": options,
+        }
+        if think is not None:
+            kwargs["think"] = think
 
+        response = ollama.generate(**kwargs)
         return response
 
 

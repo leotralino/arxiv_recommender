@@ -1,22 +1,41 @@
 topic:
-  - id: "AI_Research"
-    description: "Retrieval augmented generation (RAG), document parsing, table extraction"
-    categories: ["cs.AI", "cs.LG"]
+  - id: "Document_AI"
+    description: >
+      Document understanding and structured information extraction: layout-aware models
+      (GeoLayoutLM, LayoutLM), NuExtract-style extraction, table detection and parsing,
+      visual document question answering, PDF and OCR pipelines, chart understanding,
+      multi-modal document models, RAG with structured documents, document parsing.
+    categories: ["cs.CV", "cs.CL", "cs.AI"]
 
-  - id: "IceCube_Particle_Astrophysics"
-    description: "IceCube Neutrino Observatory, cosmic neutrinos, particle physics, dark matter searches, and high-energy astrophysical phenomena"
-    categories: ["astro-ph.HE", "hep-ex", "astro-ph.CO"]
+  - id: "LLM_Research"
+    description: >
+      LLM and SLM research: new model architectures (transformers, MoE, state space models),
+      efficient attention mechanisms, fine-tuning techniques (LoRA, QLoRA, DoRA, PEFT),
+      alignment and preference optimization (RLHF, DPO, GRPO), quantization (GPTQ, AWQ, FP8),
+      model compression, distillation, continual learning, reasoning and chain-of-thought,
+      long-context modeling, multimodal LLMs.
+    categories: ["cs.CL", "cs.LG", "cs.AI"]
+
+  - id: "Industry_Models"
+    description: >
+      New foundation model releases and technical reports from leading AI labs: Anthropic Claude,
+      OpenAI GPT and o-series reasoning models, DeepSeek, Alibaba Qwen, Meta LLaMA, Google Gemini,
+      Mistral, xAI Grok. Includes model evaluation, benchmarking, scaling laws, and safety research.
+    categories: ["cs.CL", "cs.AI", "cs.LG"]
 
 pipeline:
-  simsearch_top_k: 10
+  simsearch_top_k: 15
   lookback_days: 1
-  max_results: 100
+  max_results: 150
 
 models:
   encoder: "sentence-transformers/all-MiniLM-L6-v2"
   ranker:
     ollama:
-      model_name: "llama3.2:3b"
+      model_name: "qwen3:4b"
+      options:
+        temperature: 0
+        think: false
 
 notifiers:
   - email:

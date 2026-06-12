@@ -1,19 +1,19 @@
 import argparse
-import logging
 import sys
 from pathlib import Path
+
+import pandas as pd
+from loguru import logger
 
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
 from arxivrec.engine.llm import LLM_REGISTRY
 from arxivrec.engine.ranker import LLMRanker
 from arxivrec.notify.notification import NOTIFIER_REGISTRY
-from arxivrec.pipeline import LLMPipeline
+from arxivrec.pipeline import LLMPipeline, build_digest_html
 from arxivrec.topic import Topic
 from arxivrec.utils.config_parse import load_config
 from arxivrec.utils.logger import show_registry_table, show_topic_table
-
-logger = logging.getLogger(__name__)
 
 
 def main():
@@ -29,7 +29,6 @@ def main():
     topic_list = []
     for topic_data in cfg["topic"]:
         logger.info(f"Processing Topic: {topic_data['id']}")
-
         topic_list.append(
             Topic(
                 id=topic_data["id"],
@@ -52,6 +51,8 @@ def main():
             logger.info(f"Adding notifier: {note_class.__name__}")
             notifier_list.append(note_class(**{k: v for k, v in note_params.items()}))
 
+    all_results: dict[str, pd.DataFrame] = {}
+
     for curr_topic in topic_list:
         fetcher = ArxivFetcher(
             topic=curr_topic,
@@ -65,22 +66,43 @@ def main():
             fetcher=fetcher,
             encoder=encoder,
             llm_ranker=ranker,
-            notifier_list=notifier_list,
+            notifier_list=[],
         )
 
-        logger.info(f"Created pipeline: {pipeline}")
+        logger.info(f"Running pipeline for topic: {curr_topic.id}")
 
         try:
-            pipeline.recommend()
+            df = pipeline.recommend()
+            if df is not None and not df.empty:
+                all_results[curr_topic.id] = df
         except Exception as e:
-            logger.exception(f"Error when running pipeline: {e}")
-            sys.exit(1)
+            logger.exception(f"Error running pipeline for topic '{curr_topic.id}': {e}")
 
-        try:
-            pipeline.notify()
-        except Exception as e:
-            logger.exception(f"Error when sending notification: {e}")
-            sys.exit(1)
+    if not all_results:
+        logger.error("No recommendations generated for any topic.")
+        sys.exit(1)
+
+    try:
+        digest_html = build_digest_html(topic_list, all_results)
+
+        report_path = Path("report.html")
+        report_path.write_text(digest_html, encoding="utf-8")
+        logger.info(f"Report saved to {report_path.resolve()}")
+
+        for notifier in notifier_list:
+            try:
+                notifier.notify(
+                    subject="📚 Your Daily ArXiv Digest", body_html=digest_html
+                )
+                logger.info(f"{notifier} digest sent successfully!")
+            except Exception as e:
+                logger.warning(
+                    f"{notifier.__class__.__name__} not configured locally"
+                    f" — skipping. ({e})"
+                )
+    except Exception as e:
+        logger.exception(f"Error sending digest: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

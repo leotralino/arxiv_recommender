@@ -1,4 +1,5 @@
 import pytest
+
 from arxivrec.engine.encoder import TextEncoder
 
 
