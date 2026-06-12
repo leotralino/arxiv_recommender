@@ -1,0 +1,53 @@
+name: Daily ArXiv Digest
+
+on:
+  schedule:
+    - cron: "0 16 * * *" # 8am PST (UTC-8); becomes 9am during PDT
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync --no-dev
+
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Restore Ollama model cache
+        id: cache-ollama
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-qwen3-4b
+
+      - name: Pull model (only on cache miss)
+        if: steps.cache-ollama.outputs.cache-hit != 'true'
+        run: ollama pull qwen3:4b
+
+      - name: Start Ollama server
+        run: |
+          ollama serve &
+          for i in $(seq 1 15); do
+            curl -s http://localhost:11434/api/tags > /dev/null 2>&1 && echo "Ollama ready" && break
+            sleep 2
+          done
+
+      - name: Run arxiv-rec
+        env:
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          NOTIFY_RECIPIENT: ${{ secrets.NOTIFY_RECIPIENT }}
+        run: uv run arxiv-rec

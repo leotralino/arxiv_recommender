@@ -75,6 +75,7 @@ def build_digest_html(topics: list[Topic], results: dict[str, pd.DataFrame]) -> 
         1 for t in topics if results.get(t.id) is not None and not results[t.id].empty
     )
 
+    seen_ids: set[str] = set()
     sections = ""
     for i, topic in enumerate(topics):
         df = results.get(topic.id)
@@ -86,11 +87,14 @@ def build_digest_html(topics: list[Topic], results: dict[str, pd.DataFrame]) -> 
         papers_html = ""
 
         for _, row in df.iterrows():
+            if str(row["id"]) in seen_ids:
+                continue
+            seen_ids.add(str(row["id"]))
             title = _html.escape(str(row["title"]))
             authors = _html.escape(str(row["authors"]))
             reason = _html.escape(str(row["reasoning"]))
             url = _html.escape(str(row["url"]))
-            arxiv_id = str(row["id"]).split("v")[0]
+            arxiv_id = str(row["id"])
 
             papers_html += (
                 f'<div class="paper">'
@@ -102,12 +106,16 @@ def build_digest_html(topics: list[Topic], results: dict[str, pd.DataFrame]) -> 
                 f"</div>"
             )
 
+        if not papers_html:
+            continue
+
+        paper_count = papers_html.count('<div class="paper">')
         sections += (
             f'<div class="sec">'
             f'<div class="sec-hdr">'
             f'<div class="dot" style="background:{color}"></div>'
             f'<span class="sec-title">{label}</span>'
-            f'<span class="cnt">{len(df)} papers</span>'
+            f'<span class="cnt">{paper_count} papers</span>'
             f"</div>"
             f"{papers_html}"
             f"</div>"
@@ -199,7 +207,7 @@ class LLMPipeline(BasePipeline):
             self.topic.description, df_simsearch
         )
 
-        if self.df_recommendation is not None:
+        if self.df_recommendation is not None and not self.df_recommendation.empty:
             titles = self.df_recommendation["title"].tolist()
             logger.info(f"Recommended articles: {titles}")
 

@@ -22,6 +22,20 @@ topic:
       OpenAI GPT and o-series reasoning models, DeepSeek, Alibaba Qwen, Meta LLaMA, Google Gemini,
       Mistral, xAI Grok. Includes model evaluation, benchmarking, scaling laws, and safety research.
     categories: ["cs.CL", "cs.AI", "cs.LG"]
+    org_keywords:
+      - "OpenAI"
+      - "Anthropic"
+      - "DeepMind"
+      - "DeepSeek"
+      - "Alibaba"
+      - "Qwen"
+      - "Meta AI"
+      - "FAIR"
+      - "Mistral"
+      - "xAI"
+      - "Microsoft"
+      - "Google"
+      - "ByteDance"
 
 pipeline:
   simsearch_top_k: 15

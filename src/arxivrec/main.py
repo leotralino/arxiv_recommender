@@ -34,6 +34,7 @@ def main():
                 id=topic_data["id"],
                 description=topic_data["description"],
                 categories=topic_data["categories"],
+                org_keywords=topic_data.get("org_keywords", []),
             )
         )
 
@@ -84,25 +85,26 @@ def main():
 
     try:
         digest_html = build_digest_html(topic_list, all_results)
+    except Exception as e:
+        logger.exception(f"Failed to build digest: {e}")
+        sys.exit(1)
 
+    try:
         report_path = Path("report.html")
         report_path.write_text(digest_html, encoding="utf-8")
         logger.info(f"Report saved to {report_path.resolve()}")
-
-        for notifier in notifier_list:
-            try:
-                notifier.notify(
-                    subject="📚 Your Daily ArXiv Digest", body_html=digest_html
-                )
-                logger.info(f"{notifier} digest sent successfully!")
-            except Exception as e:
-                logger.warning(
-                    f"{notifier.__class__.__name__} not configured locally"
-                    f" — skipping. ({e})"
-                )
     except Exception as e:
-        logger.exception(f"Error sending digest: {e}")
-        sys.exit(1)
+        logger.exception(f"Failed to save report.html: {e}")
+
+    for notifier in notifier_list:
+        try:
+            notifier.notify(subject="📚 Your Daily ArXiv Digest", body_html=digest_html)
+            logger.info(f"{notifier} digest sent successfully!")
+        except Exception as e:
+            logger.warning(
+                f"{notifier.__class__.__name__} not configured locally"
+                f" — skipping. ({e})"
+            )
 
 
 if __name__ == "__main__":

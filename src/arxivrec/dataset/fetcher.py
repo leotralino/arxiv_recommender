@@ -1,5 +1,7 @@
 import datetime
+import re
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import arxiv
 import pandas as pd
@@ -24,14 +26,47 @@ class ArxivFetcher(BaseFetcher):
     ):
         super().__init__()
         self.categories = topic.categories
+        self.org_keywords = topic.org_keywords
         self.lookback_days = lookback_days
         self.max_results = max_results
 
+    def _has_org_affiliation(self, paper_id: str, url: str) -> tuple[str, bool]:
+        """Extract first-page text and check if any org keyword appears."""
+        from arxivrec.dataset.parser import get_header_text
+
+        try:
+            header = get_header_text(url)
+            pattern = "|".join(re.escape(k) for k in self.org_keywords)
+            return paper_id, bool(re.search(pattern, header, re.IGNORECASE))
+        except Exception as e:
+            logger.warning(f"Could not parse {paper_id}: {e} — including by default")
+            return paper_id, True
+
+    def _filter_by_org(self, df: pd.DataFrame) -> pd.DataFrame:
+        logger.info(f"Parsing {len(df)} PDFs for org affiliation (10 workers)...")
+
+        keep_ids: set[str] = set()
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = {
+                executor.submit(self._has_org_affiliation, row["id"], row["url"]): row[
+                    "id"
+                ]
+                for _, row in df.iterrows()
+            }
+            for future in as_completed(futures):
+                paper_id, keep = future.result()
+                if keep:
+                    keep_ids.add(paper_id)
+
+        filtered = df[df["id"].isin(keep_ids)]
+        logger.info(
+            f"Affiliation filter: {len(filtered)}/{len(df)} papers from known orgs"
+        )
+        return filtered
+
     @fallback("lookback_days", [2, 4])
     def fetch(self, **kwargs):
-        """
-        Fetches papers from specific categories within a time window.
-        """
+        """Fetches papers from specific categories within a time window."""
 
         # for fallback purpose only
         _lookback_days = kwargs.get("lookback_days", self.lookback_days)
@@ -63,7 +98,7 @@ class ArxivFetcher(BaseFetcher):
                 break
 
             tmp = {
-                "id": result.entry_id.split("/")[-1],
+                "id": result.entry_id.split("/")[-1].split("v")[0],
                 "title": result.title,
                 "authors": [a.name for a in result.authors],
                 "abstract": result.summary.replace("\n", " "),
@@ -76,4 +111,10 @@ class ArxivFetcher(BaseFetcher):
 
         since_time = threshold.strftime("%Y-%m-%d %H:%M")
         logger.info(f"Fetched {len(results)} new papers since {since_time}")
-        return pd.DataFrame(results)
+
+        df = pd.DataFrame(results)
+
+        if self.org_keywords and not df.empty:
+            df = self._filter_by_org(df)
+
+        return df
