@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+from pathlib import Path
 
 from arxivrec.dataset.fetcher import ArxivFetcher
 from arxivrec.engine.encoder import TextEncoder
@@ -17,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="src/config.yaml")
+    _default_config = Path(__file__).parent.parent / "config.yaml"
+    parser.add_argument("--config", type=str, default=str(_default_config))
     args = parser.parse_args()
 
     cfg = load_config(args.config)

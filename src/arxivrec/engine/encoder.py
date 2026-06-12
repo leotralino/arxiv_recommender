@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 class TextEncoder:
     def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
+        self.model_name = model_name
         self.model = SentenceTransformer(model_name)
 
     def encode(self, texts: str | list[str]) -> np.ndarray:
@@ -17,15 +18,14 @@ class TextEncoder:
 
     def cosine_sim(self, vec1: np.ndarray, vec2: np.ndarray) -> np.ndarray:
         """
-        Compute cosine similarity between two tensors.
-        vec1 dim: (d1, D)
-        vec2 dim: (d2, D)
+        Compute cosine similarity between two matrices.
+        vec1 dim: (d1, D), vec2 dim: (d2, D) → returns (d1, d2)
         """
-        norm1 = np.linalg.norm(vec1)
-        norm2 = np.linalg.norm(vec2)
-        if norm1 == 0 or norm2 == 0:
-            return np.array([0.0])
-        return vec1 @ vec2.T / (norm1 * norm2)
+        norms1 = np.linalg.norm(vec1, axis=1, keepdims=True)
+        norms2 = np.linalg.norm(vec2, axis=1, keepdims=True)
+        norms1 = np.where(norms1 == 0, 1, norms1)
+        norms2 = np.where(norms2 == 0, 1, norms2)
+        return vec1 @ vec2.T / (norms1 * norms2.T)
 
     def get_top_k_similar(
         self,
@@ -41,4 +41,4 @@ class TextEncoder:
         return top_k_indices
 
     def __repr__(self):
-        return f"TextEncoder(model_name={self.model})"
+        return f"TextEncoder(model_name={self.model_name})"

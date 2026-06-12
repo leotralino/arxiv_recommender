@@ -25,10 +25,10 @@ class DoclingArxivParser:
         """
         Parses an arXiv PDF (via URL or local path) into structured components.
         """
-        try:
-            result = self.converter.convert(source)
-            doc = result.document
+        result = self.converter.convert(source)
+        doc = result.document
 
+        try:
             doc_html = doc.export_to_html()
 
             soup = BeautifulSoup(doc_html, "html.parser")
@@ -46,7 +46,7 @@ class DoclingArxivParser:
             main_text = "\n\n".join(main_text_chunks)
 
             logger.info(
-                f"Successfully parsed {source}."
+                f"Successfully parsed {source}. "
                 f"Affiliation detected: {affiliation[:50]}..."
             )
 
@@ -57,8 +57,8 @@ class DoclingArxivParser:
 
         except Exception as e:
             logger.error(
-                f"Failed to parse {source}: {e}"
-                f"Attempting fallback to markdown export..."
+                f"Failed HTML parsing for {source}: {e}. "
+                f"Falling back to markdown export."
             )
 
             return {"affiliation": "", "main_text": doc.export_to_markdown()}

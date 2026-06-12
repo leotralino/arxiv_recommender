@@ -12,13 +12,13 @@ from arxivrec.topic import Topic
 logger = logging.getLogger(__name__)
 
 
-class EmptyFetchExcpetion(Exception):
+class EmptyFetchException(Exception):
     """No fetch result!"""
 
     pass
 
 
-class EmailFailExcpetion(Exception):
+class EmailFailException(Exception):
     """Fail to send email!"""
 
     pass
@@ -57,17 +57,19 @@ class LLMPipeline(BasePipeline):
         self.encoder = encoder
         self.llm_ranker = llm_ranker
         self.df_recommendation: pd.DataFrame | None = None
-        self.notifier_list = notifier_list or [EmailNotifier()]
+        self.notifier_list = (
+            notifier_list if notifier_list is not None else [EmailNotifier()]
+        )
 
     def __repr__(self):
         return (
-            f"{self.__class__.__name__}"
+            f"{self.__class__.__name__}("
             f"topic='{self.topic}', "
             f"simsearch_top_k={self.simsearch_top_k}, "
-            f"fetcher={self.fetcher}(), "
-            f"encoder={self.encoder}(), "
-            f"llm_ranker={self.llm_ranker}(), "
-            f"all notifiers={self.notifier_list}"
+            f"fetcher={self.fetcher}, "
+            f"encoder={self.encoder}, "
+            f"llm_ranker={self.llm_ranker}, "
+            f"notifiers={self.notifier_list}"
             f")"
         )
 
@@ -75,7 +77,7 @@ class LLMPipeline(BasePipeline):
         df = self.fetcher.fetch()
 
         if df is None or len(df) == 0:
-            raise EmptyFetchExcpetion("No items fetched!!")
+            raise EmptyFetchException("No items fetched!!")
 
         logger.info("Start topic and content embedding...")
 
@@ -111,9 +113,10 @@ class LLMPipeline(BasePipeline):
         </html>
         """
 
-        try:
-            assert self.df_recommendation is not None
+        if self.df_recommendation is None:
+            raise EmailFailException("No recommendations available to notify about!")
 
+        try:
             email_columns = ["title", "reasoning", "url"]
             html_table = self.df_recommendation[email_columns].to_html(
                 index=False, render_links=True
@@ -130,4 +133,4 @@ class LLMPipeline(BasePipeline):
                 logger.info(f"{_notifier} notification sent successfully!")
 
         except Exception:
-            raise EmailFailExcpetion("Failed to send email notification!")
+            raise EmailFailException("Failed to send email notification!")

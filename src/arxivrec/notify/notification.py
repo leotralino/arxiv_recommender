@@ -22,17 +22,19 @@ class EmailNotifier(BaseNotifier):
     def __init__(self, host: str = "smtp.gmail.com", port: int = 465):
         self.host = host
         self.port = port
-        self.sender = os.getenv("EMAIL_USERNAME") or ""
-        self.password = os.getenv("EMAIL_PASSWORD") or ""
-        self.recipient = os.getenv("NOTIFY_RECIPIENT") or ""
 
-        if not all([self.sender, self.password, self.recipient]):
+    def _get_credentials(self) -> tuple[str, str, str]:
+        sender = os.getenv("EMAIL_USERNAME") or ""
+        password = os.getenv("EMAIL_PASSWORD") or ""
+        recipient = os.getenv("NOTIFY_RECIPIENT") or ""
+
+        if not all([sender, password, recipient]):
             missing = [
                 k
                 for k, v in {
-                    "EMAIL_USERNAME": self.sender,
-                    "EMAIL_PASSWORD": self.password,
-                    "NOTIFY_RECIPIENT": self.recipient,
+                    "EMAIL_USERNAME": sender,
+                    "EMAIL_PASSWORD": password,
+                    "NOTIFY_RECIPIENT": recipient,
                 }.items()
                 if not v
             ]
@@ -42,21 +44,24 @@ class EmailNotifier(BaseNotifier):
                 f"Please set on your Github's forked repo:\n"
                 f"Settings -> Secrets and variables -> Actions"
             )
+        return sender, password, recipient
 
     def _send_email(
         self,
         subject: str,
         body_html: str,
     ):
+        sender, password, recipient = self._get_credentials()
+
         msg = MIMEMultipart()
         msg["Subject"] = subject
-        msg["From"] = f"ArXiv Rec <{self.sender}>"
-        msg["To"] = self.recipient
+        msg["From"] = f"ArXiv Rec <{sender}>"
+        msg["To"] = recipient
         msg.attach(MIMEText(body_html, "html"))
 
         with smtplib.SMTP_SSL(self.host, self.port) as server:
-            server.login(self.sender, self.password)
-            server.sendmail(self.sender, self.recipient, msg.as_string())
+            server.login(sender, password)
+            server.sendmail(sender, recipient, msg.as_string())
 
     def notify(
         self,

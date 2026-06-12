@@ -107,9 +107,13 @@ class LLMRanker(BaseRanker):
         llm_output = self._parse_llm_output(response["response"])
         logger.info(f"LLM Output: {llm_output}")
 
+        valid_ids = set(top_papers_df["id"])
         refined_results = []
         for paper_analysis in llm_output:
             paper_id = paper_analysis["id"]
+            if paper_id not in valid_ids:
+                logger.warning(f"LLM returned unknown paper ID '{paper_id}', skipping")
+                continue
             matching_paper = top_papers_df[top_papers_df["id"] == paper_id].iloc[0]
 
             refined_results.append(

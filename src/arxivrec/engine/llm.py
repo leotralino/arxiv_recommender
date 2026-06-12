@@ -1,5 +1,5 @@
 import os
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 import ollama
 
@@ -8,7 +8,7 @@ from arxivrec.utils.registry import Registry
 LLM_REGISTRY = Registry("LLM")
 
 
-class BaseLLM:
+class BaseLLM(ABC):
     def __init__(self, model_name: str, options: dict | None = None, **kwargs):
         self.model_name: str = model_name
         self.options: dict | None = options
@@ -31,14 +31,13 @@ class OLlamaLLM(BaseLLM):
         super().__init__(model_name, options)
 
     def call(self, prompt):
-        if not self.options:
-            self.options = {"temperature": 0}
+        options = self.options if self.options else {"temperature": 0}
 
         response = ollama.generate(
             model=self.model_name,
             prompt=prompt,
             format="json",
-            options=self.options,
+            options=options,
         )
 
         return response
