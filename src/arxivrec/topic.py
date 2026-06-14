@@ -7,3 +7,4 @@ class Topic:
     description: str = "Retrieval-augmented generation (RAG)"
     categories: list[str] = field(default_factory=lambda: ["cs.AI"])
     org_keywords: list[str] = field(default_factory=list)
+    source: str = "arxiv"

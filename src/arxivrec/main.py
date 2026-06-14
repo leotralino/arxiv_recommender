@@ -5,7 +5,8 @@ from pathlib import Path
 import pandas as pd
 from loguru import logger
 
-from arxivrec.dataset.fetcher import ArxivFetcher
+from arxivrec.dataset.fetcher import ArxivFetcher, BaseFetcher
+from arxivrec.dataset.hf_fetcher import HFDailyPapersFetcher
 from arxivrec.engine.encoder import TextEncoder
 from arxivrec.engine.llm import LLM_REGISTRY
 from arxivrec.engine.ranker import LLMRanker
@@ -33,8 +34,9 @@ def main():
             Topic(
                 id=topic_data["id"],
                 description=topic_data["description"],
-                categories=topic_data["categories"],
+                categories=topic_data.get("categories", []),
                 org_keywords=topic_data.get("org_keywords", []),
+                source=topic_data.get("source", "arxiv"),
             )
         )
 
@@ -55,11 +57,20 @@ def main():
     all_results: dict[str, pd.DataFrame] = {}
 
     for curr_topic in topic_list:
-        fetcher = ArxivFetcher(
-            topic=curr_topic,
-            lookback_days=cfg["pipeline"]["lookback_days"],
-            max_results=cfg["pipeline"]["max_results"],
-        )
+        topic_data = next(t for t in cfg["topic"] if t["id"] == curr_topic.id)
+
+        fetcher: BaseFetcher
+        if curr_topic.source == "huggingface":
+            fetcher = HFDailyPapersFetcher(
+                topic=curr_topic,
+                min_upvotes=topic_data.get("min_upvotes", 0),
+            )
+        else:
+            fetcher = ArxivFetcher(
+                topic=curr_topic,
+                lookback_days=cfg["pipeline"]["lookback_days"],
+                max_results=cfg["pipeline"]["max_results"],
+            )
 
         pipeline = LLMPipeline(
             topic=curr_topic,

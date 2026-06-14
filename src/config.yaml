@@ -37,6 +37,14 @@ topic:
       - "Google"
       - "ByteDance"
 
+  - id: "HF_Community"
+    source: "huggingface"
+    description: >
+      Top community-upvoted papers from Hugging Face Daily Papers. Covers the most
+      discussed and trending ML research across LLMs, multimodal models, efficient
+      inference, fine-tuning, and new model releases.
+    min_upvotes: 3
+
 pipeline:
   simsearch_top_k: 15
   lookback_days: 1
